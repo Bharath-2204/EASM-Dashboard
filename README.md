@@ -2,6 +2,7 @@
 
 This is an advanced, automated External Attack Surface Management (EASM) and Threat Intelligence dashboard. It utilizes deterministic OSINT workflows to map target infrastructure, identify leaked credentials, and pull active threat campaigns—synthesizing the intelligence using a **fully air-gapped, local LLM** to generate executive security briefings with zero data leakage.
 
+![EASM Dashboard](assets/EASMDashboard.png)
 
 ##  The OPSEC Advantage: Zero-Leakage AI
 Traditional AI tools (like ChatGPT or Claude) require sending highly sensitive reconnaissance data to third-party servers. Project Sentinel mitigates this critical OPSEC risk by utilizing an offline Small Language Model (SLM) via **Ollama**. Client domains, exposed secrets, and threat vectors never leave your local machine.
