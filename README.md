@@ -1,6 +1,8 @@
 # EASM — External Attack Surface Management & Threat Intelligence Platform
 
-This is a Python-based, multi-threaded External Attack Surface Management (EASM) and Threat Intelligence platform built with Streamlit. It automates passive OSINT workflows to map external infrastructure, inspect TLS/SSL endpoints, identify exposed assets, detect potential credential leaks, calculate CVSS-weighted risk scores, and export STIX 2.1 threat intelligence bundles.
+This is a Python-based, multi-threaded External Attack Surface Management (EASM) and Threat Intelligence platform built with Streamlit. It automates passive OSINT workflows to map external infrastructure, inspect TLS/SSL endpoints, identify exposed assets, detect potential credential leaks, calculate weighted attack-surface risk scores, and export STIX 2.1 threat intelligence bundles.
+
+Manually correlating subdomain exposure, TLS health, leaked credentials, and exposed services across five separate tools is slow and error-prone. Most analysts either skip steps under time pressure or drown in false positives. This project consolidates that workflow into a single parallelized pipeline: four independent recon sources run concurrently, get scored against a consistent risk model, and are handed to an LLM that is explicitly constrained to only report what the telemetry actually shows.
 
 AI-assisted analysis is powered by **AWS Bedrock**, using the unified Converse API with models such as **Meta Llama 3.1 8B** and **Claude 3.5 Haiku**. The platform generates executive threat briefings and MITRE ATT&CK mappings based on collected security telemetry.
 
@@ -28,9 +30,9 @@ AI-assisted analysis is powered by **AWS Bedrock**, using the unified Converse A
 - Applies extension-based filtering for files such as `.env`, `.yml`, `.json`, and `.config`.
 - Suppresses common repository noise, including Swagger/OpenAPI schemas.
 
-### 5. CVSS-Weighted Risk Engine
+### 5. Weighted Attack-Surface Risk Engine
 - Aggregates findings across reconnaissance sources.
-- Calculates an **Attack Surface Risk Score (0–100)**.
+- Calculates an **Attack Surface Risk Score (0–100)**. Uses a custom weighted heuristic model (not a CVSS/NVD lookup) scoring exposed credentials, TLS posture, high-risk open ports, and subdomain breadth.
 - Assigns findings to categorical severity levels based on the resulting risk score.
 
 ### 6. AI Threat Briefing & MITRE ATT&CK Mapping
@@ -86,7 +88,7 @@ SIEM / SOAR Integration
 - **Cloud/AI:** AWS Bedrock
 - **Threat Intelligence:** MITRE ATT&CK, Shodan, HackerTarget, crt.sh
 - **Code Intelligence:** GitHub API
-- **Risk Analysis:** CVSS
+- **Risk Analysis:** Custom weighted heuristic scoring model
 - **Threat Intelligence Format:** STIX 2.1
 - **Potential Integrations:** SIEM / SOAR platforms
 
@@ -173,6 +175,16 @@ http://localhost:8501
 
 ---
 
+## Scope & Limitations
+
+[#scope--limitations](#scope--limitations)
+
+- **Risk scoring** is a custom weighted heuristic (not derived from CVSS base metrics or an NVD/CVE lookup).
+- **STIX 2.1 objects** are manually constructed to match the specification but are not validated against the OASIS STIX 2.1 schema. A `stix2` library integration is planned for schema-level validation.
+- **GitHub leak detection** uses keyword + extension filtering; it is a triage signal, not a confirmed-breach detector, and can surface false positives on common terms.
+- No automated test suite yet — validation has been manual, end-to-end against live domains.
+
+---
 ## Security & Responsible Use
 
 This project is intended for **authorized security assessments and educational threat intelligence research**.
